@@ -95,5 +95,40 @@ bool boggleHelper(const std::set<std::string>& dict, const std::set<std::string>
 								   std::string word, std::set<std::string>& result, unsigned int r, unsigned int c, int dr, int dc)
 {
 //add your solution here!
+	// Base case: out of bounds
+if (r >= board.size() || c >= board.size()) {
+	// Check if we have a valid word before returning
+	if (word.length() >= 2 && dict.find(word) != dict.end()) {
+		result.insert(word);
+		return true;
+	}
+	return false;
+}
 
+// Add current character (convert to lowercase)
+word += toupper(board[r][c]);
+
+// Check if current word is valid (minimum 2 letters)
+bool isWord = (word.length() >= 2) && (dict.find(word) != dict.end());
+bool isPrefix = (prefix.find(word) != prefix.end());
+
+// If not a prefix, check if it's a word before returning
+if (!isPrefix) {
+	if (isWord) {
+		result.insert(word);
+		return true;
+	}
+	return false;
+}
+
+// Recursively search in direction
+bool foundLonger = boggleHelper(dict, prefix, board, word, result, r + dr, c + dc, dr, dc);
+
+// If no longer word found and current is word, add it
+if (!foundLonger && isWord) {
+	result.insert(word);
+	return true;
+}
+
+return foundLonger || isWord;
 }
